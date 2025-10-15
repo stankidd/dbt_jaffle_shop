@@ -1,5 +1,5 @@
 unit_tests:
-  - name: test_add_days_works_correctly
+  - name: test_add_days
     description: "Test that the add_days function works correctly."
     model: stg_orders
     given:
