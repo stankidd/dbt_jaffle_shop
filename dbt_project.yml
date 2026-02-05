@@ -31,8 +31,7 @@ seeds:
       +enabled: "{{ var('load_source_data', false) }}"
 
 models:
-  jaffle_shop:
-    staging:
-      +materialized: view
-    marts:
-      +materialized: table
+  staging:
+    +materialized: view
+  marts:
+    +materialized: table
