@@ -10,3 +10,18 @@ functions:
         description: the number of days to add
     returns:
       data_type: timestamp
+
+  - name: double_then_sum
+    description: doubles the given numbers and then sums them
+    config:
+      entry_point: dts
+      runtime_version: "3.13"
+    arguments:
+      - name: number1
+        data_type: integer
+        description: the first number to double
+      - name: number2
+        data_type: integer
+        description: the second number to double
+    returns:
+      data_type: integer
