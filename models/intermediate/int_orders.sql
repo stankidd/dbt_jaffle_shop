@@ -8,7 +8,54 @@ orders as (
 
 order_items as (
 
-    select * from {{ ref('order_items') }}
+    select * from {{ ref('stg_order_items') }}
+
+),
+
+products as (
+
+    select * from {{ ref('stg_products') }}
+
+),
+
+supplies as (
+
+    select * from {{ ref('stg_supplies') }}
+
+),
+
+order_supplies_summary as (
+
+    select
+        product_id,
+
+        sum(supply_cost) as supply_cost
+
+    from supplies
+
+    group by 1
+
+),
+
+order_items_enriched as (
+
+    select
+        order_items.order_id,
+        order_items.order_item_id,
+
+        products.product_price,
+        products.is_food_item,
+        products.is_drink_item,
+
+        order_supplies_summary.supply_cost
+
+    from order_items
+
+    left join products
+        on order_items.product_id = products.product_id
+
+    left join order_supplies_summary
+        on order_items.product_id = order_supplies_summary.product_id
 
 ),
 
@@ -17,8 +64,8 @@ order_items_summary as (
     select
         order_id,
 
-        sum(supply_cost) as order_cost,
-        sum(product_price) as order_items_subtotal,
+        sum(supply_cost)    as order_cost,
+        sum(product_price)  as order_items_subtotal,
         count(order_item_id) as count_order_items,
         sum(
             case
@@ -33,7 +80,7 @@ order_items_summary as (
             end
         ) as count_drink_items
 
-    from order_items
+    from order_items_enriched
 
     group by 1
 
@@ -54,8 +101,7 @@ compute_booleans as (
 
     from orders
 
-    left join
-        order_items_summary
+    left join order_items_summary
         on orders.order_id = order_items_summary.order_id
 
 ),

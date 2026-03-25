@@ -1,0 +1,101 @@
+models:
+  - name: dim_customers
+    description: >
+      Kundedimensjon. Én rad per kunde med aggregert ordrehistorikk
+      og kundeklassifisering.
+    columns:
+      - name: customer_id
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_name
+        data_tests:
+          - not_null
+      - name: customer_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['new', 'returning']
+
+  - name: dim_products
+    description: >
+      Produktdimensjon. Én rad per produkt med type,
+      pris og mat/drikke-klassifisering.
+    columns:
+      - name: product_id
+        data_tests:
+          - not_null
+          - unique
+      - name: product_name
+        data_tests:
+          - not_null
+
+  - name: dim_locations
+    description: >
+      Lokasjonsdimensjon. Én rad per butikk/lokasjon
+      med navn, åpningsdato og skattesats.
+    columns:
+      - name: location_id
+        data_tests:
+          - not_null
+          - unique
+      - name: location_name
+        data_tests:
+          - not_null
+
+  - name: dim_dates
+    description: >
+      Datodimensjon. Én rad per dag fra 2016 til 2030
+      med aggregerte tidsperioder.
+    columns:
+      - name: date_day
+        data_tests:
+          - not_null
+          - unique
+
+  - name: fct_orders
+    description: >
+      Faktatabell for ordrer. Én rad per ordre med nøkler til
+      kunde- og lokasjonsdimensjoner, beløp og ordredetaljer.
+    columns:
+      - name: order_id
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+      - name: location_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_locations')
+                field: location_id
+
+  - name: fct_order_items
+    description: >
+      Faktatabell for ordre-linjer. Én rad per ordre-linje med nøkler
+      til ordre og produktdimensjon, pris og forsyningskostnad.
+    columns:
+      - name: order_item_id
+        data_tests:
+          - not_null
+          - unique
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_orders')
+                field: order_id
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_id
