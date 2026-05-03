@@ -1,6 +1,6 @@
 config-version: 2
 
-name: "jaffle_shop"
+name: "dbt_jaffle_shop"
 version: "3.0.0"
 require-dbt-version: ">=1.5.0"
 
@@ -25,13 +25,13 @@ vars:
   "dbt_date:time_zone": "America/Los_Angeles"
 
 seeds:
-  jaffle_shop:
+  dbt_jaffle_shop:
     +schema: raw
     jaffle-data:
       +enabled: "{{ var('load_source_data', false) }}"
 
 models:
-  jaffle_shop:
+  dbt_jaffle_shop:
     staging:
       +materialized: view
     marts:
